@@ -1,3 +1,61 @@
+// const mongoose =require ('mongoose');
+// const mongoDB =require('mongodb')
+// const mongoURI = 'mongodb://localhost:27017/Tomato'
+// module.exports =function(callback){
+//     mongoose.connect(mongoURI,{useNewUrlParser:true},async (err,result)=>{
+//         if(err) console.log("---"+err)
+//             else{
+//         console.log("connected")
+//         const foodCollection = await mongoose.connection.db.collection("FoodItems");
+//         foodCollection.find({}).toArray(async function(err,data){
+//             const categoryCollection = await mongoose.connection.db.collection("FoodCategory");
+//             categoryCollection.find({}).toArray(async function(err,Catdata){
+//                 callback(err,data,Catdata);
+//             })
+//         });
+//     }
+//     })
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const mongoose = require('mongoose');
 const {MongoClient} = require('mongodb')
 
