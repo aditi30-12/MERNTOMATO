@@ -1,59 +1,59 @@
-// global.foodData =require('./db'),(function call(err,data,Catdata){
-//     console.log(data)
-//     if(err) console.log(err);
-//     global.foodData =data;
-//     global.FoodCategory = Catdata;
-// })
-const express =require('express')
-const app=express()
-const port =5000
-const { MongoClient, ServerApiVersion } = require('mongodb');
+// Required modules
+const express = require('express');
+const { MongoClient } = require('mongodb');
 const { default: mongoose } = require('mongoose');
-const uri = "mongodb://localhost:27017/Tomato";
-let createuser = require('./Routes/CreateUser.js')
-let DisplayData= require('./Routes/DisplayData.js')
-let bodyparser = require('body-parser')
+let bodyparser = require('body-parser');
 
-app.use(bodyparser.json())
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-let mongoDB = ()=>{
-    mongoose.connect(uri).then(()=>{
-        console.log("connected")
-    }).catch(err =>{
-        console.log(err.message)
-    })
-}
-mongoDB()
-let fetch = () =>{
-    let client = new MongoClient(uri);
-    let db = client.db("Tomato");
-    let collection = db.collection("FoodItems");
-    let result = collection.find().toArray().then(result =>{
-        //  console.log(result)
-    })
-}
-fetch()
+// Initialize Express app
+const app = express();
+const port = 5001; // Port where the server will listen
 
+// MongoDB connection URI
+const uri = 'mongodb://localhost:27017/Tomato';
+const client = new MongoClient(uri);
 
-app.use((req,res,next)=>{
-    res.setHeader("Access-Control-Allow-Origin","http://localhost:3000");
+// Middlewares
+app.use(bodyparser.json()); // Body-parser middleware to parse JSON request bodies
+app.use(express.json()); // Built-in express middleware to parse JSON
+
+// Enable CORS for cross-origin requests
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
     res.header(
         "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With,Content-Type,Accept"
+        "Origin, X-Requested-With, Content-Type, Accept"
     );
     next();
-})
-// app.post('/data', (req, res) =>{
-//     let {name} = req.body;
-//     console.log(name);
-//     res.send(name);
-// })
-app.use(express.json())
-app.use('/api', require("./Routes/CreateUser.js"));
-app.use('/api', require("./Routes/DisplayData.js"));
-app.get('/',(req,res)=>{
-    res.send('Hello World!')
-})
-app.listen(port,()=>{
-    console.log(`Example app listening on port ${port}`)
-})
+});
+
+// Middleware to attach MongoDB client to the request object
+app.use((req, res, next) => {
+    req.dbClient = client;
+    next();
+});
+
+// Routes
+app.use('/api', require("./Routes/CreateUser.js")); // Routes for creating a user
+app.use('/api', require("./Routes/DisplayData.js")); // Routes for displaying data
+
+// Simple test route
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
+// MongoDB connection function
+async function connectToMongoDB() {
+    try {
+        await client.connect();
+        console.log("Connected to MongoDB successfully!");
+    } catch (err) {
+        console.error("MongoDB connection error:", err);
+        process.exit(1); // Exit if MongoDB connection fails
+    }
+}
+
+// Start Express server and connect to MongoDB
+app.listen(port, async () => {
+    await connectToMongoDB(); // Ensure MongoDB is connected before starting the server
+    console.log(`Example app listening on port ${port}`);
+});
