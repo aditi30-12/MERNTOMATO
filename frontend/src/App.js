@@ -12,6 +12,7 @@ import Signup from './screens/Signup.js';
 import '../node_modules/bootstrap-dark-5/dist/css/bootstrap-dark.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js';
+import Cart from "./Components/Cart";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route exact path="/" element={<Home/>}/>
           <Route exact path="/login"element={<Login/>}/>
           <Route exact path="/Signup" element={<Signup/>}/>
+          <Route exact path="/cart" element={<Cart/>}></Route>
         </Routes>
       </div>
     </Router>

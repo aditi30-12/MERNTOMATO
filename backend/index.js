@@ -12,6 +12,17 @@ const port = 5001; // Port where the server will listen
 const uri = 'mongodb://localhost:27017/Tomato';
 const client = new MongoClient(uri);
 
+
+mongoose.connect(uri, {
+    serverSelectionTimeoutMS: 5000,  // Timeout after 5 seconds
+})
+    .then(() => console.log('MongoDB connected successfully'))
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1); // Exit the process if connection fails
+    });
+
+
 // Middlewares
 app.use(bodyparser.json()); // Body-parser middleware to parse JSON request bodies
 app.use(express.json()); // Built-in express middleware to parse JSON
@@ -19,10 +30,8 @@ app.use(express.json()); // Built-in express middleware to parse JSON
 // Enable CORS for cross-origin requests
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
-    );
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
 });
 
@@ -33,27 +42,15 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use('/api', require("./Routes/CreateUser.js")); // Routes for creating a user
-app.use('/api', require("./Routes/DisplayData.js")); // Routes for displaying data
+app.use('/api', require("./Routes/user.js")); // Routes for creating a user
+app.use('/api', require("./Routes/foodData.js")); // Routes for displaying data
+app.use('/api/cart', require("./Routes/cart.js")); // Routes for cart
 
 // Simple test route
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-// MongoDB connection function
-async function connectToMongoDB() {
-    try {
-        await client.connect();
-        console.log("Connected to MongoDB successfully!");
-    } catch (err) {
-        console.error("MongoDB connection error:", err);
-        process.exit(1); // Exit if MongoDB connection fails
-    }
-}
-
-// Start Express server and connect to MongoDB
 app.listen(port, async () => {
-    await connectToMongoDB(); // Ensure MongoDB is connected before starting the server
     console.log(`Example app listening on port ${port}`);
 });
