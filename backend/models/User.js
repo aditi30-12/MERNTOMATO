@@ -1,25 +1,26 @@
-const mongoose = require('mongoose')
-const{ Schema }=mongoose;         //Destructuring
-const UserSchema = new Schema({
-    name:{
+const mongoose = require('mongoose');
+
+// Define the schema for the User
+const userSchema = new mongoose.Schema({
+    name: {
         type: String,
-        required:true
+        required: true
     },
-    location:{
-        type:String,
-        required:true
+    email: {
+        type: String,
+        required: true,
+        unique: true,  // Ensure email is unique
+        match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,  // Simple email regex pattern
     },
-    email:{
-        type:String,
-        required:true
+    password: {
+        type: String,
+        required: true
     },
-    password:{
-        type:String,
-        required:true
-    },
-    date:{
-        type:Date,
-        default:Date.now
+    location: {
+        type: String,
+        required: true
     }
 });
-module.exports = mongoose.model('user',UserSchema)
+
+// Create and export the User model
+module.exports = mongoose.model('User', userSchema);
